@@ -15,6 +15,12 @@ def wait_until_loaded(browser, timeout):
     WebDriverWait(browser, timeout).until(lambda driver: driver.execute_script("return document.readyState") == "complete")
 
 
+def is_half_point(score_elem: Tag):
+    for score_part in score_elem.stripped_strings:
+        if "w/o" in score_part.lower() or "ret" in score_part.lower():
+            return True
+
+
 def main():
     options = webdriver.ChromeOptions()
     options.add_argument("--incognito")
@@ -35,16 +41,19 @@ def main():
     # TODO: if we can't parse, just assume no results instead of throwing an error
 
     player_wins = {}
-    table_elem: Tag = None
-    for table_elem in results_container.children:
-        if table_elem.name == "thead":
-            round_name = table_elem.find("th").string
+    round: Tag = None
+    for round in results_container.children:
+        if round.name == "thead":
+            round_name = round.find("th").string
             if "qualifying" in round_name.lower():
                 break
-        elif table_elem.name == "tbody":
-            for match in table_elem.find_all("tr"):
+        elif round.name == "tbody":
+            match: Tag = None
+            for match in round.find_all("tr"):
                 winner = match.find("td", class_="day-table-name").find("a").string
-                player_wins[winner] = player_wins.get(winner, 0) + 1
+                score = match.find("td", class_="day-table-score").find("a")
+                incr = 0.5 if is_half_point(score) else 1
+                player_wins[winner] = player_wins.get(winner, 0) + incr
 
     browser.quit()
 
