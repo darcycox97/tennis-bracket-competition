@@ -8,11 +8,9 @@ from typing import List
 
 from bs4 import BeautifulSoup, Tag
 
-from time import sleep
+import boto3
 
-# SOURCE_ADDRESS = "https://www.atptour.com/en/scores/archive/wimbledon/540/2019/results?matchType=singles"
-# SOURCE_ADDRESS = "https://www.atptour.com/en/scores/current/halle/500/results"
-SOURCE_ADDRESS = "https://www.atptour.com/en/scores/current/roland-garros/520/results"
+from time import sleep
 
 def wait_until_loaded(browser, timeout):
     WebDriverWait(browser, timeout).until(lambda driver: driver.execute_script("return document.readyState") == "complete")
@@ -29,23 +27,48 @@ class Match:
         self.round_name = round_name
         self.tags = tags
 
+    def to_db_item(self):
+        item = {
+            "winner": self.winner,
+            "loser": self.loser,
+            "round_name": self.round_name,
+            "tags": self.tags
+        }
+
+        return item
+
 class Team:
     def __init__(self, team_name: str, players: List[str]):
         self.team_name = team_name
         self.players = players
 
+    def to_db_item(self):
+        item = {
+            "name": self.team_name,
+            "players": self.players
+        }
+
+        return item
+
 class Tournament:
-    def __init__(self, matches: List[Match], teams: List[Team]):
+    def __init__(self, name: str, matches: List[Match], teams: List[Team]):
+        self.name = name
         self.matches = matches
         self.teams = teams
 
+    def to_db_item(self):
+        teams = [t.to_db_item() for t in self.teams]
+        matches = [m.to_db_item() for m in self.matches]
 
-TEAMS = [
-    Team("D", ["Novak Djokovic", "Jannik Sinner"]),
-    Team("Bab", ["Matteo Berrettini", "Daniil Medvedev"])
-]
+        item = {
+            "tournament_name": self.name,
+            "teams": teams,
+            "matches": matches
+        }
 
-def parse_tournament(url):
+        return item
+
+def parse_tournament(url, tourney_name, teams: List[Team]):
     options = webdriver.ChromeOptions()
     options.add_argument("--incognito")
 
@@ -69,15 +92,15 @@ def parse_tournament(url):
     round_name: str = None
     for round in results_container.children:
         if round.name == "thead":
-            round_name = round.find("th").string
+            round_name = str(round.find("th").string)
             if "qualifying" in round_name.lower():
                 break
         elif round.name == "tbody":
             match: Tag = None
             for match in round.find_all("tr"):
                 players = match.find_all("td", class_="day-table-name")
-                winner = players[0].find("a").string
-                loser = players[1].find("a").string
+                winner = str(players[0].find("a").string)
+                loser = str(players[1].find("a").string)
 
                 tags = []
                 score = match.find("td", class_="day-table-score").find("a")
@@ -87,10 +110,50 @@ def parse_tournament(url):
                 matches.append(Match(winner, loser, round_name, tags))
 
 
-    tourney = Tournament(matches, TEAMS)
+    tourney = Tournament(tourney_name, matches, teams)
 
     for m in tourney.matches:
-        print(f"{m.winner} d. {m.loser}")
+        print(f"{m.winner} d. {m.loser} in {m.round_name}. tags={m.tags}")
+
+    return tourney
+
+def create_table(db):
+    # TODO: beware this is async
+    table = db.create_table(
+        TableName='TennisTournament',
+        KeySchema=[
+            {
+                'AttributeName': 'tournament_name',
+                'KeyType': 'HASH'  # Partition key
+            },
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'tournament_name',
+                'AttributeType': 'S'
+            },
+
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 10,
+            'WriteCapacityUnits': 10
+        }
+    )
+    print(table)
+
+
+def upload_to_db(tourney: Tournament):
+    db = boto3.resource("dynamodb", region_name="us-east-2")
+    table = db.Table('TennisTournament')
+    tourney_item = tourney.to_db_item()
+    table.put_item(Item=tourney_item)
 
 if __name__ == "__main__":
-    parse_tournament(SOURCE_ADDRESS)
+    teams = [
+        Team("D", ["Novak Djokovic", "Jannik Sinner"]),
+        Team("Bab", ["Matteo Berrettini", "Daniil Medvedev"])
+    ]
+    url = "https://www.atptour.com/en/scores/current/roland-garros/520/results"
+    tourney_info = parse_tournament(url, "Roland Garros 2021", teams)
+    upload_to_db(tourney_info)
+
