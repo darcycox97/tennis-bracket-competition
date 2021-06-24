@@ -150,10 +150,35 @@ def upload_to_db(tourney: Tournament):
 
 if __name__ == "__main__":
     teams = [
-        Team("D", ["Novak Djokovic", "Jannik Sinner"]),
-        Team("Bab", ["Matteo Berrettini", "Daniil Medvedev"])
+        Team("Robert Baker", [
+            "Daniil Medvedev",
+            "Stefanos Tsitsipas",
+            "Milos Raonic",
+            "Grigor Dimitrov",
+            "Daniel Evans",
+            "Felix Auger-Aliassime",
+            "Marton Fucsovics",
+            "Tennys Sandgren"]),
+        Team("Hendy Hend", [
+            "Novak Djokovic",
+            "Alexander Zverev",
+            "Diego Schwartzman",
+            "Karen Khachanov",
+            "Stanislas Wawrinka",
+            "Borna Coric",
+            "Alexander Bublik",
+            "Dennis Novak"]),
+        Team("Dirty D", [
+            "Dominic Thiem",
+            "Andrey Rublev",
+            "Matteo Berrettini",
+            "Alex De Minaur",
+            "Dusan Lajovic",
+            "Hubert Hurkacz",
+            "Jannik Sinner",
+            "Marin Cilic"]),
     ]
-    url = "https://www.atptour.com/en/scores/current/roland-garros/520/results"
-    tourney_info = parse_tournament(url, "Roland Garros 2021", teams)
+    url = "https://www.atptour.com/en/scores/archive/australian-open/580/2021/results"
+    tourney_info = parse_tournament(url, "Australian Open 2021", teams)
     upload_to_db(tourney_info)
 

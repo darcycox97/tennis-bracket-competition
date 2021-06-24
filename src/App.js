@@ -102,7 +102,7 @@ async function fetchData() {
     return sampleData.json()
   }
 
-  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Roland+Garros+2021")).json()
+  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Australian+Open+2021")).json()
 }
 
 function App() {
