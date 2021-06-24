@@ -1,9 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
-
-import sampleData from "./tournament.json"
-
+import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2'
+import './App.css';
 
 function calculateScores(data) {
   let scores = []
@@ -93,19 +90,44 @@ function chartConfig(tourneyName, scores) {
   };
 
   return {
-    data: chartData,
-    options: chartOptions
+    chartData,
+    chartOptions
   }
 }
 
+async function fetchData() {
+  if (process.env.NODE_ENV === "development") {
+    const sampleData = await fetch("./tournament.json")
+    console.log(sampleData)
+    return sampleData.json()
+  }
+
+  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Roland+Garros+2021")).json()
+}
+
 function App() {
-  const scores = calculateScores(sampleData)
-  const { data, options } = chartConfig(sampleData.tournament_name, scores)
+
+  const [state, setState] = useState(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const tourneyData = await fetchData()
+      const scores = calculateScores(tourneyData)
+      const {chartData, chartOptions} = chartConfig(tourneyData.tournament_name, scores)
+      setState({
+        chartData,
+        chartOptions
+      })
+    }
+    if (!state) {
+      getData()
+    }
+  });
 
   return (
     <div className="App">
       <header className="App-header">
-        <Bar data={data} options={options} />
+        {state && <Bar data={state.chartData} options={state.chartOptions} />}
       </header>
     </div>
   );
