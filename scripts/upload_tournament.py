@@ -89,7 +89,7 @@ def parse_tournament(url, tourney_name, teams: List[Team]):
     exists: bool = soup.find(id="scoresResultsContent") != None
     if not exists:
         return Tournament(tourney_name, [], teams)
-        
+
     results_container: Tag = soup.find(id="scoresResultsContent").find("table", class_="day-table")
 
     round: Tag = None
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     # TODO: these should be configurable in the web page
     teams = [
-        Team("Robert Baker", [
+        Team("8badboyz", [
             "Matteo Berrettini",
             "Reilly Opelka",
             "Ugo Humbert",
@@ -165,7 +165,7 @@ if __name__ == "__main__":
             "Karen Khachanov",
             "Sebastian Korda",
             "Alexander Zverev"]),
-        Team("Hendy", [
+        Team("wetmulch", [
             "Novak Djokovic",
             "Casper Ruud",
             "Alex de Minaur",
@@ -174,7 +174,7 @@ if __name__ == "__main__":
             "Marin Cilic",
             "Richard Gasquet",
             "Kei Nishikori"]),
-        Team("Davy Groggs", [
+        Team("lawnm0werz", [
             "Daniil Medvedev",
             "Andrey Rublev",
             "Sam Querrey",
