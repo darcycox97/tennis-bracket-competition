@@ -86,6 +86,10 @@ def parse_tournament(url, tourney_name, teams: List[Team]):
 
     matches: List[Match] = []
 
+    exists: bool = soup.find(id="scoresResultsContent") != None
+    if not exists:
+        return Tournament(tourney_name, [], teams)
+        
     results_container: Tag = soup.find(id="scoresResultsContent").find("table", class_="day-table")
 
     round: Tag = None
@@ -149,36 +153,40 @@ def upload_to_db(tourney: Tournament):
     table.put_item(Item=tourney_item)
 
 if __name__ == "__main__":
+
+    # TODO: these should be configurable in the web page
     teams = [
         Team("Robert Baker", [
-            "Daniil Medvedev",
-            "Stefanos Tsitsipas",
-            "Milos Raonic",
-            "Grigor Dimitrov",
-            "Daniel Evans",
-            "Felix Auger-Aliassime",
-            "Marton Fucsovics",
-            "Tennys Sandgren"]),
-        Team("Hendy Hend", [
-            "Novak Djokovic",
-            "Alexander Zverev",
-            "Diego Schwartzman",
-            "Karen Khachanov",
-            "Stanislas Wawrinka",
-            "Borna Coric",
-            "Alexander Bublik",
-            "Dennis Novak"]),
-        Team("Dirty D", [
-            "Dominic Thiem",
-            "Andrey Rublev",
             "Matteo Berrettini",
-            "Alex De Minaur",
-            "Dusan Lajovic",
-            "Hubert Hurkacz",
+            "Reilly Opelka",
+            "Ugo Humbert",
+            "Roger Federer",
+            "Andy Murray",
+            "Karen Khachanov",
+            "Sebastian Korda",
+            "Alexander Zverev"]),
+        Team("Hendy", [
+            "Novak Djokovic",
+            "Casper Ruud",
+            "Alex de Minaur",
+            "Taylor Fritz",
+            "Cameron Norrie",
+            "Marin Cilic",
+            "Richard Gasquet",
+            "Kei Nishikori"]),
+        Team("Davy Groggs", [
+            "Daniil Medvedev",
+            "Andrey Rublev",
+            "Sam Querrey",
+            "Roberto Bautista Agut",
+            "Grigor Dimitrov",
             "Jannik Sinner",
-            "Marin Cilic"]),
+            "John Isner",
+            "Nick Kyrgios"]),
     ]
-    url = "https://www.atptour.com/en/scores/archive/australian-open/580/2021/results"
-    tourney_info = parse_tournament(url, "Australian Open 2021", teams)
+
+    # TODO: these should be command line args
+    url = "https://www.atptour.com/en/scores/current/wimbledon/540/results"
+    tourney_info = parse_tournament(url, "Wimbledon 2021", teams)
     upload_to_db(tourney_info)
 
