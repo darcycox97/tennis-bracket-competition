@@ -1,6 +1,10 @@
+html {
+  background-color: #1f2229;
+  color: rgb(173, 168, 168);
+}
+
 .App {
   text-align: center;
-  background-color: #1f2229;
   display: flex;
   justify-content: center;
   /* align-items: center; */
@@ -11,6 +15,13 @@
   padding:30px;
   max-height: 100vh;
   min-width: 50vw;
+}
+
+.team-list {
+  padding-top: 30px;
+  padding-right: 30px;
+  text-align: left;
+  display: inline-block;
 }
 
 

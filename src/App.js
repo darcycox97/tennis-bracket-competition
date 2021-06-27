@@ -23,7 +23,6 @@ function calculateScores(data) {
 }
 
 function chartConfig(tourneyName, scores) {
-
   const chartData = {
     labels: scores.map(t => t.name),
     datasets: [
@@ -99,10 +98,34 @@ async function fetchData() {
   if (process.env.NODE_ENV === "development") {
     const sampleData = await fetch("./tournament.json")
     console.log(sampleData)
-    return sampleData.json()
+    let data = await sampleData.json()
+    // sort by name
+    data.teams.sort((left, right) => {
+    if(left.name < right.name) {
+      return -1;
+    }
+
+    if(left.name > right.name) {
+      return 1;
+    }
+
+    return 0;
+  })
+    return data
   }
 
-  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Australian+Open+2021")).json()
+  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Wimbledon+2021")).json()
+}
+
+function renderTeam(team) {
+  return (
+    <div className="team-list">
+      <h3>{team.name}</h3>
+      <ul>
+        {team.players.map(p => <li>{p}</li>)}
+      </ul>
+    </div>
+  )
 }
 
 function App() {
@@ -115,6 +138,7 @@ function App() {
       const scores = calculateScores(tourneyData)
       const {chartData, chartOptions} = chartConfig(tourneyData.tournament_name, scores)
       setState({
+        tourneyData,
         chartData,
         chartOptions
       })
@@ -128,6 +152,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         {state && <Bar data={state.chartData} options={state.chartOptions} />}
+        {state && state.tourneyData.teams.map(renderTeam)}
       </header>
     </div>
   );
