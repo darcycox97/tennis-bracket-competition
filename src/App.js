@@ -99,18 +99,6 @@ async function fetchData() {
     const sampleData = await fetch("./tournament.json")
     console.log(sampleData)
     let data = await sampleData.json()
-    // sort by name
-    data.teams.sort((left, right) => {
-    if(left.name < right.name) {
-      return -1;
-    }
-
-    if(left.name > right.name) {
-      return 1;
-    }
-
-    return 0;
-  })
     return data
   }
 

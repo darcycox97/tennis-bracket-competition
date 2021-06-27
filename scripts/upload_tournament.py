@@ -165,15 +165,6 @@ if __name__ == "__main__":
             "Karen Khachanov",
             "Sebastian Korda",
             "Alexander Zverev"]),
-        Team("wetmulch", [
-            "Novak Djokovic",
-            "Casper Ruud",
-            "Alex de Minaur",
-            "Taylor Fritz",
-            "Cameron Norrie",
-            "Marin Cilic",
-            "Richard Gasquet",
-            "Kei Nishikori"]),
         Team("lawnm0werz", [
             "Daniil Medvedev",
             "Andrey Rublev",
@@ -183,6 +174,15 @@ if __name__ == "__main__":
             "Jannik Sinner",
             "John Isner",
             "Nick Kyrgios"]),
+        Team("wetmulch", [
+            "Novak Djokovic",
+            "Casper Ruud",
+            "Alex de Minaur",
+            "Taylor Fritz",
+            "Cameron Norrie",
+            "Marin Cilic",
+            "Richard Gasquet",
+            "Kei Nishikori"]),
     ]
 
     # TODO: these should be command line args
