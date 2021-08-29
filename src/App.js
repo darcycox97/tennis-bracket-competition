@@ -42,7 +42,7 @@ function chartConfig(tourneyName, scores) {
       },
     ],
   };
-  
+
   const chartOptions = {
     maintainAspectRatio: false,
     barPercentage: 0.5,
@@ -102,7 +102,7 @@ async function fetchData() {
     return data
   }
 
-  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Wimbledon+2021")).json()
+  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=US+Open+2021")).json()
 }
 
 function renderTeam(team) {
@@ -124,7 +124,7 @@ function App() {
     const getData = async () => {
       const tourneyData = await fetchData()
       const scores = calculateScores(tourneyData)
-      const {chartData, chartOptions} = chartConfig(tourneyData.tournament_name, scores)
+      const { chartData, chartOptions } = chartConfig(tourneyData.tournament_name, scores)
       setState({
         tourneyData,
         chartData,
