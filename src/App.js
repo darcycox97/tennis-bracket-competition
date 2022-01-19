@@ -102,7 +102,7 @@ async function fetchData() {
     return data
   }
 
-  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=US+Open+2021")).json()
+  return await (await fetch("https://novakfanclub.xyz/api/tennis-tournament-results?tournamentName=Australian+Open+2022")).json()
 }
 
 function renderTeam(team) {
