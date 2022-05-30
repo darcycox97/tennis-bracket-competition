@@ -1,7 +1,7 @@
-from selenium import webdriver 
-from selenium.webdriver.common.by import By 
-from selenium.webdriver.support.ui import WebDriverWait 
-from selenium.webdriver.support import expected_conditions as EC, wait 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC, wait
 from selenium.common.exceptions import TimeoutException
 
 from typing import List
@@ -12,16 +12,20 @@ import boto3
 
 from time import sleep
 
+
 def wait_until_loaded(browser, timeout):
-    WebDriverWait(browser, timeout).until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+    WebDriverWait(browser, timeout).until(lambda driver: driver.execute_script(
+        "return document.readyState") == "complete")
+
 
 def is_half_point(score_elem: Tag):
     for score_part in score_elem.stripped_strings:
         if "w/o" in score_part.lower() or "ret" in score_part.lower():
             return True
 
-class Match: 
-    def __init__(self, winner: str, loser: str, round_name: str, tags: List[str]=[]):
+
+class Match:
+    def __init__(self, winner: str, loser: str, round_name: str, tags: List[str] = []):
         self.winner = winner
         self.loser = loser
         self.round_name = round_name
@@ -37,6 +41,7 @@ class Match:
 
         return item
 
+
 class Team:
     def __init__(self, team_name: str, players: List[str]):
         self.team_name = team_name
@@ -49,6 +54,7 @@ class Team:
         }
 
         return item
+
 
 class Tournament:
     def __init__(self, name: str, matches: List[Match], teams: List[Team]):
@@ -67,6 +73,7 @@ class Tournament:
         }
 
         return item
+
 
 def parse_tournament(url, tourney_name, teams: List[Team]):
     options = webdriver.ChromeOptions()
@@ -90,7 +97,8 @@ def parse_tournament(url, tourney_name, teams: List[Team]):
     if not exists:
         return Tournament(tourney_name, [], teams)
 
-    results_container: Tag = soup.find(id="scoresResultsContent").find("table", class_="day-table")
+    results_container: Tag = soup.find(
+        id="scoresResultsContent").find("table", class_="day-table")
 
     round: Tag = None
     round_name: str = None
@@ -113,13 +121,13 @@ def parse_tournament(url, tourney_name, teams: List[Team]):
 
                 matches.append(Match(winner, loser, round_name, tags))
 
-
     tourney = Tournament(tourney_name, matches, teams)
 
     for m in tourney.matches:
         print(f"{m.winner} d. {m.loser} in {m.round_name}. tags={m.tags}")
 
     return tourney
+
 
 def create_table(db):
     # TODO: beware this is async
@@ -152,41 +160,48 @@ def upload_to_db(tourney: Tournament):
     tourney_item = tourney.to_db_item()
     table.put_item(Item=tourney_item)
 
-if __name__ == "__main__":
 
+def run():
     # TODO: these should be configurable in the web page
     teams = [
-        Team("8badboyz", [
-            "Matteo Berrettini",
-            "Reilly Opelka",
-            "Ugo Humbert",
-            "Roger Federer",
-            "Andy Murray",
-            "Karen Khachanov",
-            "Sebastian Korda",
-            "Alexander Zverev"]),
-        Team("lawnm0werz", [
-            "Daniil Medvedev",
-            "Andrey Rublev",
-            "Sam Querrey",
-            "Roberto Bautista Agut",
-            "Grigor Dimitrov",
+        Team("The Danger Men", [  # bob
             "Jannik Sinner",
-            "John Isner",
-            "Nick Kyrgios"]),
-        Team("wetmulch", [
-            "Novak Djokovic",
-            "Casper Ruud",
+            "Rafael Nadal",
+            "Matteo Berrettini",
             "Alex de Minaur",
-            "Taylor Fritz",
+            "Carlos Alcaraz",
+            "Ugo Humbert",
+            "Alexei Popyrin",
+            "Alexander Bublik"
+        ]),
+        Team("Hendy's Heroes", [  # hendy
+            "Daniil Medvedev",
             "Cameron Norrie",
+            "Hubert Hurkacz",
+            "Pablo Carreno Busta",
             "Marin Cilic",
-            "Richard Gasquet",
-            "Kei Nishikori"]),
+            "Daniel Evans",
+            "Andy Murray",
+            "Tommy Paul"
+        ]),
+        Team("Disappointment", [  # D
+            "Stefanos Tsitsipas",
+            "Diego Schwartzman",
+            "Felix Auger-Aliassime",
+            "Gael Monfils",
+            "Aslan Karatsev",
+            "Reilly Opelka",
+            "Fabio Fognini",
+            "Holger Rune"
+        ]),
     ]
 
     # TODO: these should be command line args
-    url = "https://www.atptour.com/en/scores/current/wimbledon/540/results"
-    tourney_info = parse_tournament(url, "Wimbledon 2021", teams)
+    url = "https://www.atptour.com/en/scores/current/australian-open/580/results"
+    tourney_info = parse_tournament(url, "Australian Open 2022", teams)
+
     upload_to_db(tourney_info)
 
+
+if __name__ == "__main__":
+    run()

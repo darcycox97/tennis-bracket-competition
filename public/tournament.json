@@ -16,6 +16,19 @@
             ]
         },
         {
+            "name": "lawnm0werz",
+            "players": [
+                "Daniil Medvedev",
+                "Andrey Rublev",
+                "Sam Querrey",
+                "Roberto Bautista Agut",
+                "Grigor Dimitrov",
+                "Jannik Sinner",
+                "John Isner",
+                "Nick Kyrgios"
+            ]
+        },
+        {
             "name": "wetmulch",
             "players": [
                 "Novak Djokovic",
@@ -26,19 +39,6 @@
                 "Marin Cilic",
                 "Richard Gasquet",
                 "Kei Nishikori"
-            ]
-        },
-        {
-            "name": "lawnmowerz",
-            "players": [
-                "Daniil Medvedev",
-                "Andrey Rublev",
-                "Sam Querrey",
-                "Roberto Bautista Agut",
-                "Grigor Dimitrov",
-                "Jannik Sinner",
-                "John Isner",
-                "Nick Kyrgios"
             ]
         }
     ]
