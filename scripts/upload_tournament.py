@@ -164,41 +164,41 @@ def upload_to_db(tourney: Tournament):
 def run():
     # TODO: these should be configurable in the web page
     teams = [
-        Team("The Danger Men", [  # bob
-            "Jannik Sinner",
-            "Rafael Nadal",
-            "Matteo Berrettini",
-            "Alex de Minaur",
-            "Carlos Alcaraz",
-            "Ugo Humbert",
-            "Alexei Popyrin",
-            "Alexander Bublik"
-        ]),
-        Team("Hendy's Heroes", [  # hendy
-            "Daniil Medvedev",
-            "Cameron Norrie",
-            "Hubert Hurkacz",
-            "Pablo Carreno Busta",
-            "Marin Cilic",
-            "Daniel Evans",
-            "Andy Murray",
-            "Tommy Paul"
-        ]),
-        Team("Disappointment", [  # D
+        Team("Bab", [  # bob
             "Stefanos Tsitsipas",
-            "Diego Schwartzman",
-            "Felix Auger-Aliassime",
-            "Gael Monfils",
-            "Aslan Karatsev",
+            "Jannik Sinner",
+            "Cameron Norrie",
+            "Miomir Kecmanovic",
+            "Alejandro Davidovich Fokina",
+            "Ugo Humbert",
+            "Sebastian Korda",
+            "Cristian Garin"
+        ]),
+        Team("Hend", [  # hendy
+            "Hubert Hurkacz",
+            "Rafael Nadal",
+            "Carlos Alcaraz",
+            "Alex De Minaur",
+            "Frances Tiafoe",
+            "Marin Cilic",
+            "Filip Krajinovic",
+            "Roberto Carballes Baena"
+        ]),
+        Team("D", [  # D
+            "Novak Djokovic",
+            "Casper Ruud",
+            "Pablo Carreno Busta",
             "Reilly Opelka",
-            "Fabio Fognini",
-            "Holger Rune"
+            "Grigor Dimitrov",
+            "Botic Van de Zandschulp",
+            "David Goffin",
+            "Alexander Bublik"
         ]),
     ]
 
     # TODO: these should be command line args
-    url = "https://www.atptour.com/en/scores/current/australian-open/580/results"
-    tourney_info = parse_tournament(url, "Australian Open 2022", teams)
+    url = "https://www.atptour.com/en/scores/current/roland-garros/520/results"
+    tourney_info = parse_tournament(url, "Roland Garros 2022", teams)
 
     upload_to_db(tourney_info)
 
